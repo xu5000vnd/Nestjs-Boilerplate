@@ -1,3 +1,4 @@
+require('dotenv').config()
 export interface Config {
   [key: string]: any
 }
@@ -8,5 +9,8 @@ export default (): Config => ({
   JWT: {
     JWT_SECRECT_KEY: process.env.JWT_ACCESS_SECRET || 'JWT_ACCESS_SECRET',
     JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
+  },
+  swagger: {
+    path: process.env.SWAGGER_PATH || 'swagger',
   },
 })

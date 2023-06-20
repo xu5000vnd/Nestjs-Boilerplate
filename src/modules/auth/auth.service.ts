@@ -1,6 +1,5 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { LoginDto } from './dto/login.dto'
-import { PrismaService } from '../prisma/prisma.service'
 import { User, Prisma, UserStatusEnum } from '@prisma/client'
 import { JwtService } from '../jwt/jwt.service'
 import { comparePassword, hashPassword } from 'src/utils/password.util'
@@ -11,7 +10,6 @@ import { UserService } from '../user/user.service'
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly prisma: PrismaService,
     private readonly userService: UserService,
   ) {}
 
@@ -23,7 +21,7 @@ export class AuthService {
       return token
     }
 
-    throw new UnauthorizedException('Invalid credentials')
+    throw new BadRequestException('Invalid Credentials')
   }
 
   private async validateUser(
@@ -46,7 +44,12 @@ export class AuthService {
   async signup(signupDto: SignUpDto): Promise<string> {
     const user = await this.userService.findByEmail(signupDto.email)
     if (user) {
-      throw new Error('Email is already taken')
+      throw new BadRequestException([
+        {
+          field: 'email',
+          error: 'Email is already taken',
+        },
+      ])
     }
 
     const hashedPassword = await hashPassword(signupDto.password)
