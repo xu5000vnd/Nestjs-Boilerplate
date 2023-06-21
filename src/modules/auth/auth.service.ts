@@ -5,12 +5,15 @@ import { JwtService } from '../jwt/jwt.service'
 import { comparePassword, hashPassword } from 'src/utils/password.util'
 import { SignUpDto } from './dto/signup.dto'
 import { UserService } from '../user/user.service'
+import { MailerService } from '../mailer/mailer.service'
+import { EMAIL_TEMPLATE } from 'src/common/enums/mailer.enum'
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly mailer: MailerService,
   ) {}
 
   async login(loginDto: LoginDto): Promise<string> {
@@ -59,6 +62,15 @@ export class AuthService {
       status: UserStatusEnum.ACTIVE,
     }
     await this.userService.create(userToDb)
+
+    await this.mailer.sendMail({
+      to: signupDto.email,
+      subject: 'Welcome to the app',
+      template: EMAIL_TEMPLATE.SIGN_UP,
+      variables: {
+        email: signupDto.email,
+      },
+    })
     return 'User registered successfully.'
   }
 }

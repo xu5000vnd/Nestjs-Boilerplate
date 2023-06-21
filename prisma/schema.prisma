@@ -11,13 +11,13 @@ datasource db {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
   password     String
   status       UserStatusEnum
-  balance      Float         @default(0)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  balance      Float          @default(0)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
   transactions Transaction[]
   bids         Bid[]
 
@@ -25,14 +25,14 @@ model User {
 }
 
 model Transaction {
-  id        Int             @id @default(autoincrement())
-  state     TransactionEnum
-  amount    Float
-  userId    Int
-  User      User            @relation(fields: [userId], references: [id])
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-  bidRefund BidRefund?
+  id             Int             @id @default(autoincrement())
+  state          TransactionEnum
+  amount         Float
+  userId         Int
+  User           User            @relation(fields: [userId], references: [id])
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  BidTransaction BidTransaction?
 
   @@map("transaction")
 }
@@ -49,29 +49,30 @@ model Item {
 }
 
 model Bid {
-  id         Int           @id @default(autoincrement())
-  amount     Float
-  userId     Int
-  User       User          @relation(fields: [userId], references: [id])
-  itemId     Int
-  Item       Item          @relation(fields: [itemId], references: [id])
-  status     BidStatusEnum
-  createdAt  DateTime      @default(now())
-  isRefund   Boolean       @default(false)
-  refundedAt DateTime?
-  bidRefund  BidRefund?
+  id             Int             @id @default(autoincrement())
+  amount         Float
+  userId         Int
+  User           User            @relation(fields: [userId], references: [id])
+  itemId         Int
+  Item           Item            @relation(fields: [itemId], references: [id])
+  status         BidStatusEnum
+  createdAt      DateTime        @default(now())
+  isRefund       Boolean         @default(false)
+  refundedAt     DateTime?
+  BidTransaction BidTransaction?
 
   @@map("bid")
 }
 
-model BidRefund {
+model BidTransaction {
   id            Int         @id @default(autoincrement())
   bidId         Int         @unique
   bid           Bid         @relation(fields: [bidId], references: [id])
   transactionId Int         @unique
   transaction   Transaction @relation(fields: [transactionId], references: [id])
+  createdAt     DateTime    @default(now())
 
-  @@map("bid_refund")
+  @@map("bid_transaction")
 }
 
 enum UserStatusEnum {

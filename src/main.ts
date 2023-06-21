@@ -5,6 +5,7 @@ import { setupSwagger } from './integrations/swagger'
 import { BadRequestException, ValidationPipe } from '@nestjs/common'
 import { ValidationError } from 'class-validator'
 import { NestExpressApplication } from '@nestjs/platform-express'
+import { UserInterceptor } from './common/interceptors/user.interceptor'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
@@ -24,6 +25,9 @@ async function bootstrap() {
       },
     }),
   )
+
+  app.useGlobalInterceptors(new UserInterceptor())
+
   await setupSwagger(app)
   const config = app.get(ConfigService)
   await app.listen(config.get('APP_PORT', 3001), () => {

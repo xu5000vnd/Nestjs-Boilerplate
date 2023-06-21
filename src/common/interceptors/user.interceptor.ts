@@ -11,7 +11,8 @@ import { JwtService } from '../../modules/jwt/jwt.service'
 
 @Injectable()
 export class UserInterceptor implements NestInterceptor {
-  constructor(@Inject(JwtService) private readonly jwtService: JwtService) {}
+  @Inject()
+  private jwtService: JwtService
   async intercept(
     context: ExecutionContext,
     next: CallHandler,
