@@ -4,6 +4,7 @@ import { UserService } from '../user/user.service'
 import { ItemService } from '../item/item.service'
 import { Bid, BidStatusEnum, TransactionEnum } from '@prisma/client'
 import moment from 'moment'
+import { SYSTEM_STATUS } from 'src/common/constants/system.constant'
 
 @Injectable()
 export class BidService {
@@ -39,6 +40,7 @@ export class BidService {
             await this.handleNewBid(prismaTx, { userId, itemId, amount })
             await this.handlePrevBid(prismaTx, { userId, itemId, amount })
           })
+          return { message: 'Your bid is accepted', status: SYSTEM_STATUS.OK }
         } else {
           throw new BadGatewayException(
             'Amount should be more than start price or previous bid',
