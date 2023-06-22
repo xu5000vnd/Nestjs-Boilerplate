@@ -1,18 +1,15 @@
 import {
   CallHandler,
   ExecutionContext,
-  Inject,
   Injectable,
   NestInterceptor,
   UnauthorizedException,
 } from '@nestjs/common'
 import { Observable } from 'rxjs'
-import { JwtService } from '../../modules/jwt/jwt.service'
+import JwtUtil from 'src/utils/jwt.util'
 
 @Injectable()
 export class UserInterceptor implements NestInterceptor {
-  @Inject()
-  private jwtService: JwtService
   async intercept(
     context: ExecutionContext,
     next: CallHandler,
@@ -20,12 +17,11 @@ export class UserInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest()
     const token = this.getToken(request)
     if (token) {
-      const decodedToken = this.jwtService.verifyToken(token)
+      const decodedToken = JwtUtil.decodeTokenJwt(token)
       if (!decodedToken) {
         throw new UnauthorizedException()
       }
-
-      request.user = decodedToken.userId
+      request.user = decodedToken['userId']
     }
 
     return next.handle()
@@ -33,8 +29,9 @@ export class UserInterceptor implements NestInterceptor {
 
   private getToken(request: Request): string | null {
     const headers: any = request.headers
-    if (headers.authorization) {
-      const token = headers.split(' ')[1]
+    const authorization = headers.authorization
+    if (authorization) {
+      const token = authorization.split(' ')[1]
       return token
     }
     return null

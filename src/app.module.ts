@@ -6,7 +6,6 @@ import { AuthModule } from './modules/auth/auth.module'
 import { PrismaModule } from './modules/prisma/prisma.module'
 import config from './configs/system.config'
 import { UserModule } from './modules/user/user.module'
-import { JwtModule } from './modules/jwt/jwt.module'
 import { MailerModule } from './modules/mailer/mailer.module'
 import { CreditModule } from './modules/credit/credit.module'
 import { BidModule } from './modules/bid/bid.module'
@@ -17,7 +16,6 @@ import { BidModule } from './modules/bid/bid.module'
     AuthModule,
     PrismaModule,
     UserModule,
-    JwtModule,
     MailerModule,
     CreditModule,
     BidModule,

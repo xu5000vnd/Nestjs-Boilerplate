@@ -9,11 +9,18 @@ import { JwtAuthGuard } from '../../common/guards/auth.guard'
 import { UserId } from 'src/common/decorators/user.decorator'
 import { UserProfile } from './dto/user.dto'
 import { UserService } from './user.service'
-import { ApiHeaders, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiHeaders,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import { Item } from '@prisma/client'
 
 @Controller('users')
 @ApiTags('Users')
+@ApiBearerAuth()
 export class UsersController {
   constructor(private readonly user: UserService) {}
 

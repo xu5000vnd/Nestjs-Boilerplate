@@ -1,17 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { LoginDto } from './dto/login.dto'
 import { User, Prisma, UserStatusEnum } from '@prisma/client'
-import { JwtService } from '../jwt/jwt.service'
 import { comparePassword, hashPassword } from 'src/utils/password.util'
 import { SignUpDto } from './dto/signup.dto'
 import { UserService } from '../user/user.service'
 import { MailerService } from '../mailer/mailer.service'
 import { EMAIL_TEMPLATE } from 'src/common/enums/mailer.enum'
+import JwtUtil from 'src/utils/jwt.util'
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly mailer: MailerService,
   ) {}
@@ -20,7 +19,7 @@ export class AuthService {
     const user = await this.validateUser(loginDto.email, loginDto.password)
     if (user) {
       const payload = { userId: user.id }
-      const token = this.jwtService.generateToken(payload)
+      const token = JwtUtil.createTokenJwt(payload)
       return token
     }
 
