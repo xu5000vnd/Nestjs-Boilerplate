@@ -1,5 +1,4 @@
 import { BadGatewayException, Injectable } from '@nestjs/common'
-import { TransactionService } from '../transaction/transaction.service'
 import { UserService } from '../user/user.service'
 import { PrismaService } from '../prisma/prisma.service'
 import { TransactionEnum } from '@prisma/client'
