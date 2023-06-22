@@ -20,6 +20,7 @@ model User {
   updatedAt    DateTime       @updatedAt
   transactions Transaction[]
   bids         Bid[]
+  Item         Item[]
 
   @@map("user")
 }
@@ -38,12 +39,17 @@ model Transaction {
 }
 
 model Item {
-  id         Int            @id @default(autoincrement())
-  name       String
-  status     ItemStatusEnum @default(ACTIVE)
-  timeWindow Int
-  endTime    DateTime
-  bids       Bid[]
+  id          Int            @id @default(autoincrement())
+  name        String
+  status      ItemStatusEnum @default(PENDING)
+  startPrice  Float
+  timeWindow  Int
+  publishedAt DateTime?
+  endedAt     DateTime?
+  createdAt   DateTime       @default(now())
+  userId      Int
+  User        User           @relation(fields: [userId], references: [id])
+  bids        Bid[]
 
   @@map("item")
 }
@@ -84,11 +90,12 @@ enum UserStatusEnum {
 enum TransactionEnum {
   DEPOSIT
   WITHDRAW
-  REFUND
 }
 
 enum ItemStatusEnum {
+  PENDING
   ACTIVE
+  CANCELED
   EXPIRED
 }
 

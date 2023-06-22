@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "item" ALTER COLUMN "status" SET DEFAULT 'PENDING';
