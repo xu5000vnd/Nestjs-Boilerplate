@@ -7,10 +7,10 @@ import { UserId } from 'src/common/decorators/user.decorator'
 export class CreditController {
   constructor(private readonly creditService: CreditService) {}
 
-  @Post('/')
+  @Post('/deposit')
   @UseGuards(JwtAuthGuard)
-  deposit(@UserId() userId: number, @Body() amount: number) {
-    const message = this.creditService.deposit(userId, amount)
+  async deposit(@UserId() userId: number, @Body('amount') amount: number) {
+    const message = await this.creditService.deposit(userId, amount)
     return { message }
   }
 }

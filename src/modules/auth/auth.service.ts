@@ -15,12 +15,16 @@ export class AuthService {
     private readonly mailer: MailerService,
   ) {}
 
-  async login(loginDto: LoginDto): Promise<string> {
+  async login(loginDto: LoginDto): Promise<any> {
     const user = await this.validateUser(loginDto.email, loginDto.password)
     if (user) {
       const payload = { userId: user.id }
       const token = JwtUtil.createTokenJwt(payload)
-      return token
+      delete user.password
+      return {
+        accessToken: token,
+        ...user,
+      }
     }
 
     throw new BadRequestException('Invalid Credentials')
@@ -31,6 +35,11 @@ export class AuthService {
     password: string,
   ): Promise<User | null> {
     const user = await this.userService.findByEmail(email)
+    if (user.status !== UserStatusEnum.ACTIVE) {
+      throw new BadRequestException(
+        'Your account is inactive. Please contact to Admin to active your account',
+      )
+    }
 
     if (user) {
       const hashedPassword = user.password

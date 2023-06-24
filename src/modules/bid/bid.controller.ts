@@ -3,11 +3,11 @@ import { BidService } from './bid.service'
 import { UserId } from 'src/common/decorators/user.decorator'
 import { BidItemDto } from './dto/bid.dto'
 
-@Controller('bid')
+@Controller('bids')
 export class BidController {
   constructor(private readonly bidService: BidService) {}
 
-  @Post('/items/:itemId')
+  @Post('/item/:itemId')
   bidItem(
     @UserId() userId: number,
     @Param() itemId: number,

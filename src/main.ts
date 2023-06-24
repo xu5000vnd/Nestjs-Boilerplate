@@ -7,6 +7,7 @@ import { ValidationError } from 'class-validator'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { UserInterceptor } from './common/interceptors/user.interceptor'
 import { GlobalExceptionsFilter } from './common/filters/global-exception.filter'
+import { UnauthExceptionFilter } from './common/filters/unath-exception.filter'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
@@ -29,6 +30,7 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new UserInterceptor())
   app.useGlobalFilters(new GlobalExceptionsFilter())
+  app.useGlobalFilters(new UnauthExceptionFilter())
 
   await setupSwagger(app)
   const config = app.get(ConfigService)

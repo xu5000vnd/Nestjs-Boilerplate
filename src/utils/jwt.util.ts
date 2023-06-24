@@ -1,4 +1,5 @@
 import { sign, verify, JwtPayload } from 'jsonwebtoken'
+import { UnauthorizedException } from 'src/common/exceptions/Unauthorization.exception'
 require('dotenv').config()
 
 class JwtUtil {
@@ -8,7 +9,7 @@ class JwtUtil {
     try {
       return verify(token, this.key)
     } catch (err) {
-      throw new Error('Invalid Token')
+      throw new UnauthorizedException()
     }
   }
 
