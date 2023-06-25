@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Query,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ItemService } from './item.service'
 import { JwtAuthGuard } from 'src/common/guards/auth.guard'
 import { Item } from '@prisma/client'
@@ -38,7 +30,11 @@ export class ItemController {
 
   @Post('/:id/publish')
   @UseGuards(JwtAuthGuard)
-  publishItem(@Param() id: number, @UserId() userId: number): Promise<Item> {
-    return this.itemService.publishItem(userId, id)
+  async publishItem(
+    @Param('id') id: number,
+    @UserId() userId: number,
+  ): Promise<{ message: string }> {
+    const message = await this.itemService.publishItem(userId, id)
+    return { message }
   }
 }

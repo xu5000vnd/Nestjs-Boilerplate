@@ -1,4 +1,4 @@
-import { BadGatewayException, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { UserService } from '../user/user.service'
 import { PrismaService } from '../prisma/prisma.service'
 import { TransactionEnum } from '@prisma/client'
@@ -16,7 +16,7 @@ export class CreditService {
   ): Promise<string> {
     const user = await this.userService.findById(userId)
     if (!user) {
-      throw new BadGatewayException('User not found')
+      throw new BadRequestException('User not found')
     }
 
     await this.prisma.$transaction(async (prisma) => {
@@ -55,7 +55,7 @@ export class CreditService {
   ): Promise<string> {
     const user = await this.userService.findById(userId)
     if (!user) {
-      throw new BadGatewayException('User not found')
+      throw new BadRequestException('User not found')
     }
 
     await this.prisma.$transaction(async (prisma) => {
@@ -88,6 +88,6 @@ export class CreditService {
       }
     })
 
-    return 'Deposit was successful'
+    return 'Withdraw was successful'
   }
 }

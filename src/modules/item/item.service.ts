@@ -1,7 +1,7 @@
-import { BadGatewayException, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
 import { Item, ItemStatusEnum, Prisma } from '@prisma/client'
-import moment from 'moment'
+import * as moment from 'moment'
 
 @Injectable()
 export class ItemService {
@@ -26,23 +26,27 @@ export class ItemService {
     })
   }
 
-  async publishItem(userId: number, id: number): Promise<Item> {
+  async publishItem(userId: number, id: number): Promise<string> {
     const item = await this.findById(id)
     if (item) {
       if (item.userId == userId) {
-        if (!item.publishedAt) {
+        if (item.status == ItemStatusEnum.PENDING) {
           item.status = ItemStatusEnum.ACTIVE
           item.publishedAt = moment().toDate()
           item.endedAt = moment().add(item.timeWindow, 'seconds').toDate()
-          return this.prisma.item.update({ where: { id }, data: item })
+          await this.prisma.item.update({
+            where: { id },
+            data: item,
+          })
+          return 'Item published successfully'
         } else {
-          throw new BadGatewayException('Item already published')
+          throw new BadRequestException('Item already published')
         }
       } else {
-        throw new BadGatewayException('Unauthorized')
+        throw new BadRequestException('Unauthorized')
       }
     } else {
-      throw new BadGatewayException('Not found Item')
+      throw new BadRequestException('Not found Item')
     }
   }
 

@@ -1,9 +1,9 @@
-import { BadGatewayException, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
 import { UserService } from '../user/user.service'
 import { ItemService } from '../item/item.service'
 import { Bid, BidStatusEnum, TransactionEnum } from '@prisma/client'
-import moment from 'moment'
+import * as moment from 'moment'
 import { SYSTEM_STATUS } from 'src/common/constants/system.constant'
 
 @Injectable()
@@ -17,7 +17,7 @@ export class BidService {
   async bidItem(userId: number, itemId: number, amount: number) {
     const balance = await this.userService.getBalance(userId)
     if (balance < amount) {
-      throw new BadGatewayException('Not enough balance')
+      throw new BadRequestException('Not enough balance')
     }
 
     const item = await this.itemService.findById(itemId)
@@ -34,7 +34,7 @@ export class BidService {
             })
 
             if (user.balance < amount) {
-              throw new BadGatewayException('Not enough balance')
+              throw new BadRequestException('Not enough balance')
             }
 
             await this.handleNewBid(prismaTx, { userId, itemId, amount })
@@ -42,16 +42,16 @@ export class BidService {
           })
           return { message: 'Your bid is accepted', status: SYSTEM_STATUS.OK }
         } else {
-          throw new BadGatewayException(
+          throw new BadRequestException(
             'Amount should be more than start price or previous bid',
           )
         }
       } else {
         await this.itemService.endItem(itemId)
-        throw new BadGatewayException('Item already ended')
+        throw new BadRequestException('Item already ended')
       }
     } else {
-      throw new BadGatewayException('Not found Item')
+      throw new BadRequestException('Not found Item')
     }
   }
 

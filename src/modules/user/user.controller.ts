@@ -33,7 +33,7 @@ export class UsersController {
       description: 'Bearer token',
     },
   ])
-  @ApiResponse({ status: 200, description: 'Login successful' })
+  @ApiResponse({ status: 200, description: 'User Profile' })
   @ApiResponse({ status: 404, description: 'User not found' })
   getProfile(@UserId() userId: number): Promise<UserProfile> {
     return this.user.getProfile(userId)
@@ -41,7 +41,10 @@ export class UsersController {
 
   @Get('/:id/items')
   @UseGuards(JwtAuthGuard)
-  getMyItems(@UserId() userId: number, @Param() id: number): Promise<Item[]> {
+  getMyItems(
+    @UserId() userId: number,
+    @Param('id') id: number,
+  ): Promise<Item[]> {
     if (userId == id) {
       return this.user.getItems(userId)
     }
