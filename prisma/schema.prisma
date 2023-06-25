@@ -26,14 +26,13 @@ model User {
 }
 
 model Transaction {
-  id             Int             @id @default(autoincrement())
-  state          TransactionEnum
-  amount         Float
-  userId         Int
-  User           User            @relation(fields: [userId], references: [id])
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  BidTransaction BidTransaction?
+  id        Int             @id @default(autoincrement())
+  state     TransactionEnum
+  amount    Float
+  userId    Int
+  User      User            @relation(fields: [userId], references: [id])
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 
   @@map("transaction")
 }
@@ -55,28 +54,25 @@ model Item {
 }
 
 model Bid {
-  id             Int             @id @default(autoincrement())
-  amount         Float
-  userId         Int
-  User           User            @relation(fields: [userId], references: [id])
-  itemId         Int
-  Item           Item            @relation(fields: [itemId], references: [id])
-  status         BidStatusEnum
-  createdAt      DateTime        @default(now())
-  isRefund       Boolean         @default(false)
-  refundedAt     DateTime?
-  BidTransaction BidTransaction?
+  id         Int           @id @default(autoincrement())
+  amount     Float
+  userId     Int
+  User       User          @relation(fields: [userId], references: [id])
+  itemId     Int
+  Item       Item          @relation(fields: [itemId], references: [id])
+  status     BidStatusEnum
+  createdAt  DateTime      @default(now())
+  isRefund   Boolean       @default(false)
+  refundedAt DateTime?
 
   @@map("bid")
 }
 
 model BidTransaction {
-  id            Int         @id @default(autoincrement())
-  bidId         Int         @unique
-  bid           Bid         @relation(fields: [bidId], references: [id])
-  transactionId Int         @unique
-  transaction   Transaction @relation(fields: [transactionId], references: [id])
-  createdAt     DateTime    @default(now())
+  id            Int      @id @default(autoincrement())
+  bidId         Int
+  transactionId Int
+  createdAt     DateTime @default(now())
 
   @@map("bid_transaction")
 }

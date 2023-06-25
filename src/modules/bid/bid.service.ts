@@ -26,7 +26,10 @@ export class BidService {
       const endTime = moment(item.endedAt).unix()
       if (currentTime <= endTime) {
         const prevBid = await this.prevBidItem(itemId)
-        if ((!prevBid && amount > item.startPrice) || prevBid.amount < amount) {
+        if (
+          (!prevBid && amount > item.startPrice) ||
+          prevBid?.amount < amount
+        ) {
           await this.prisma.$transaction(async (prismaTx) => {
             // check balancer
             const user = await prismaTx.user.findFirst({
@@ -37,10 +40,14 @@ export class BidService {
               throw new BadRequestException('Not enough balance')
             }
 
-            await this.handleNewBid(prismaTx, { userId, itemId, amount })
-            await this.handlePrevBid(prismaTx, { userId, itemId, amount })
+            await this.handleNewBid(prismaTx, { userId, itemId, amount, user })
+            if (prevBid) {
+              await this.handlePrevBid(prismaTx, {
+                prevBid,
+              })
+            }
           })
-          return { message: 'Your bid is accepted', status: SYSTEM_STATUS.OK }
+          return 'Your bid is accepted'
         } else {
           throw new BadRequestException(
             'Amount should be more than start price or previous bid',
@@ -67,7 +74,18 @@ export class BidService {
   }
 
   async handleNewBid(prismaTx, params): Promise<void> {
-    const { userId, itemId, amount } = params
+    const { userId, itemId, amount, user } = params
+
+    // update balance
+    await prismaTx.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        balance: user.balance - amount,
+      },
+    })
+
     // create bid
     const bid = await prismaTx.bid.create({
       data: {
@@ -97,11 +115,10 @@ export class BidService {
   }
 
   async handlePrevBid(prismaTx, params): Promise<void> {
-    const { userId, itemId, amount } = params
-    const prevBid = await this.prevBidItem(itemId)
+    const { prevBid } = params
     // refund previous bidder
     const prevUser = await prismaTx.user.findFirst({
-      where: { id: userId },
+      where: { id: prevBid.userId },
     })
     // update balance
     await prismaTx.user.update({
@@ -115,8 +132,8 @@ export class BidService {
     // create transaction refund
     const prevTx = await prismaTx.transaction.create({
       data: {
-        userId,
-        amount,
+        userId: prevBid.userId,
+        amount: prevBid.amount,
         state: TransactionEnum.DEPOSIT,
       },
     })
