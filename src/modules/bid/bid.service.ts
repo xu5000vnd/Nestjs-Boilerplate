@@ -4,7 +4,6 @@ import { UserService } from '../user/user.service'
 import { ItemService } from '../item/item.service'
 import { Bid, BidStatusEnum, TransactionEnum } from '@prisma/client'
 import * as moment from 'moment'
-import { SYSTEM_STATUS } from 'src/common/constants/system.constant'
 
 @Injectable()
 export class BidService {

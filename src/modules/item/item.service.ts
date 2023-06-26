@@ -2,17 +2,37 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
 import { Item, ItemStatusEnum, Prisma } from '@prisma/client'
 import * as moment from 'moment'
+import { InjectQueue } from '@nestjs/bull'
+import { Queue } from 'bull'
 
 @Injectable()
 export class ItemService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @InjectQueue('item') private readonly itemQueue: Queue,
+  ) {}
 
   async getItemsByUserId(userId: number): Promise<Item[]> {
     return this.prisma.item.findMany({ where: { userId } })
   }
 
   async findById(id: number): Promise<Item> {
-    return this.prisma.item.findFirst({ where: { id } })
+    return this.prisma.item.findFirst({
+      where: { id },
+    })
+  }
+
+  async findBidItemSuccess(id: number): Promise<any> {
+    return this.prisma.item.findFirst({
+      where: {
+        id,
+      },
+      include: {
+        bids: {
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+    })
   }
 
   async addItem(data): Promise<Item> {
@@ -38,6 +58,17 @@ export class ItemService {
             where: { id },
             data: item,
           })
+          // add queue
+          await this.itemQueue.add(
+            'enditem',
+            {
+              itemId: id,
+            },
+            {
+              delay: item.timeWindow * 1000, //ms
+            },
+          )
+
           return 'Item published successfully'
         } else {
           throw new BadRequestException('Item already published')
