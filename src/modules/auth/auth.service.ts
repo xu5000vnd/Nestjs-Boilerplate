@@ -30,10 +30,7 @@ export class AuthService {
     throw new BadRequestException('Invalid Credentials')
   }
 
-  private async validateUser(
-    email: string,
-    password: string,
-  ): Promise<User | null> {
+  async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.userService.findByEmail(email)
     if (user.status !== UserStatusEnum.ACTIVE) {
       throw new BadRequestException(

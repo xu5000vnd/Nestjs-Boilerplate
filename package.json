@@ -80,23 +80,6 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
-  },
   "validate-branch-name": {
     "pattern": "^(master|main|dev|staging){1}$|^(feat|fix|hotfix|release|refactor|cherry)/.+$",
     "errorMsg": "Branch name must be one of the following: master, main, dev, staging, feat/<feature-name>, fix/<issue-number>, hotfix/<issue-number>, release/<version-number>, refactor/<issue-number>"
