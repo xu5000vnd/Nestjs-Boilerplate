@@ -3,7 +3,7 @@
 This project is an assignment homework. \
 Tech Stacks: NestJd, Restful API, Authenticate JWT, Prisma ORM \
 Nodejs: v18.16.0 \
-FrontEnd [jitera-backend](https://github.com/xu5000vnd/jitera-frontend)
+FrontEnd [Reactjs-Frontend](https://github.com/xu5000vnd/React-Typescript-Boilerplate)
 ## Config env
 You could follow `.env.example` file
 
